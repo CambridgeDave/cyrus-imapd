@@ -262,8 +262,10 @@ static int jmap_sieve_get(jmap_req_t *req)
         goto done;
     }
 
-    r = sieve_open_folder(req->accountid, 0/*write*/, &mailbox);
+    r = sieve_ensure_folder(req->accountid, &mailbox);
     if (r) goto done;
+
+    mailbox_unlock_index(mailbox, NULL);
 
     db = sievedb_open_userid(req->accountid);
     if (!db) {
@@ -761,7 +763,7 @@ static int jmap_sieve_set(struct jmap_req *req)
 
     if (jerr) goto done;
 
-    r = sieve_open_folder(req->accountid, 1/*write*/, &mailbox);
+    r = sieve_ensure_folder(req->accountid, &mailbox);
     if (r) goto done;
 
     buf_printf(&buf, MODSEQ_FMT, mailbox->i.highestmodseq);
@@ -1075,8 +1077,10 @@ static int jmap_sieve_query(jmap_req_t *req)
         }
     }
 
-    r = sieve_open_folder(req->accountid, 0/*write*/, &mailbox);
+    r = sieve_ensure_folder(req->accountid, &mailbox);
     if (r) goto done;
+
+    mailbox_unlock_index(mailbox, NULL);
 
     db = sievedb_open_userid(req->accountid);
     if (!db) {
