@@ -13039,6 +13039,7 @@ static int perform_output(const char *extname, const mbentry_t *mbentry, struct 
             if (mboxname_iscalendarmailbox(intname, mbtype)    ||
                 mboxname_isaddressbookmailbox(intname, mbtype) ||
                 mboxname_isdavdrivemailbox(intname, mbtype)    ||
+                mboxname_issievemailbox(intname, mbtype)       ||
                 mboxname_issubmissionmailbox(intname, mbtype)    ||
                 mboxname_ispushsubscriptionmailbox(intname, mbtype)    ||
                 mboxname_isdavnotificationsmailbox(intname, mbtype)) {
@@ -13402,6 +13403,7 @@ static int recursivematch_cb(struct findall_data *data, void *rockp)
             r = mboxname_iscalendarmailbox(intname, 0) ||
                 mboxname_isaddressbookmailbox(intname, 0) ||
                 mboxname_isdavdrivemailbox(intname, 0) ||
+                mboxname_issievemailbox(intname, 0) ||
                 mboxname_isdavnotificationsmailbox(intname, 0);
 
             if (!data->mbname) mbname_free(&mbname);
