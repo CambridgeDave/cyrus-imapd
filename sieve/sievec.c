@@ -91,7 +91,7 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-    instream = fopen(argv[optind++],"r");
+    instream = !strcmp(argv[optind], "-") ? stdin : fopen(argv[optind], "r");
     if(instream == NULL) {
         fprintf(stderr, "Unable to open %s for reading\n", argv[1]);
         exit(1);
@@ -120,7 +120,7 @@ int main(int argc, char **argv)
     }
 
     /* Now, open the new file */
-    fd = open(argv[optind], O_CREAT | O_TRUNC | O_WRONLY, 0644);
+    fd = open(argv[optind+1], O_CREAT | O_TRUNC | O_WRONLY, 0644);
     if(fd < 0) {
         fprintf(stderr, "couldn't open bytecode output file\n");
         sieve_free_bytecode(&bc);
