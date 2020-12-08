@@ -89,10 +89,11 @@
                                       for non-existent ancestor mailboxes */
 #define MBTYPE_SUBMISSION   (1<<9) /* JMAP Mail Submission Mailbox */
 #define MBTYPE_PUSHSUBSCRIPTION   (1<<10) /* JMAP Push Subscriptions */
+#define MBTYPE_JMAPNOTIFICATION   (1<<11) /* JMAP Notifications */
 #define MBTYPE_UNKNOWN      (1<<31) /* unknown type for error handling */
 
 #define MBTYPES_DAV     (MBTYPE_CALENDAR|MBTYPE_ADDRESSBOOK|MBTYPE_COLLECTION)
-#define MBTYPES_NONIMAP (MBTYPE_NETNEWS|MBTYPES_DAV|MBTYPE_SUBMISSION|MBTYPE_PUSHSUBSCRIPTION)
+#define MBTYPES_NONIMAP (MBTYPE_NETNEWS|MBTYPES_DAV|MBTYPE_SUBMISSION|MBTYPE_PUSHSUBSCRIPTION|MBTYPE_JMAPNOTIFICATION)
 
 /* master name of the mailboxes file */
 #define FNAME_MBOXLIST "/mailboxes.db"
