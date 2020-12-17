@@ -736,7 +736,7 @@ static json_t* relatedto_from_ical(icalcomponent*);
 /* Convert at most nmemb entries in the ical recurrence byDay/Month/etc array
  * named byX using conv. Return a new JSON array, sorted in ascending order. */
 static json_t* recurrence_byX_fromical(short byX[], size_t nmemb, int (*conv)(int)) {
-    json_t *jbd = json_pack("[]");
+    json_t *jbd = json_array();
 
     size_t i;
     int tmp[nmemb];
@@ -747,7 +747,7 @@ static json_t* recurrence_byX_fromical(short byX[], size_t nmemb, int (*conv)(in
     size_t n = i;
     qsort(tmp, n, sizeof(int), compare_int);
     for (i = 0; i < n; i++) {
-        json_array_append_new(jbd, json_pack("i", tmp[i]));
+        json_array_append_new(jbd, json_integer(tmp[i]));
     }
 
     return jbd;
@@ -772,7 +772,7 @@ static json_t* recurrencerule_from_ical(icalproperty *prop, icaltimezone *untilt
     json_object_set_new(recur, "frequency", json_string(s));
     free(s);
 
-    json_object_set_new(recur, "interval", json_pack("i", rrule.interval));
+    json_object_set_new(recur, "interval", json_integer(rrule.interval));
 
 #ifdef HAVE_RSCALE
     /* rscale */
@@ -807,7 +807,7 @@ static json_t* recurrencerule_from_ical(icalproperty *prop, icaltimezone *untilt
     free(s);
 
     /* byDay */
-    json_t *jbd = json_pack("[]");
+    json_t *jbd = json_array();
     for (i = 0; i < ICAL_BY_DAY_SIZE; i++) {
         json_t *jday;
         icalrecurrencetype_weekday weekday;
@@ -817,7 +817,7 @@ static json_t* recurrencerule_from_ical(icalproperty *prop, icaltimezone *untilt
             break;
         }
 
-        jday = json_pack("{}");
+        jday = json_object();
         weekday = icalrecurrencetype_day_day_of_week(rrule.by_day[i]);
 
         s = xstrdup(icalrecur_weekday_to_string(weekday));
@@ -844,7 +844,7 @@ static json_t* recurrencerule_from_ical(icalproperty *prop, icaltimezone *untilt
     }
 
     /* byMonth */
-    json_t *jbm = json_pack("[]");
+    json_t *jbm = json_array();
     for (i = 0; i < ICAL_BY_MONTH_SIZE; i++) {
         short bymonth;
 
@@ -973,8 +973,8 @@ static json_t*
 override_rdate_from_ical(icalproperty *prop)
 {
     /* returns a JSON object with a single key value pair */
-    json_t *override = json_pack("{}");
-    json_t *o = json_pack("{}");
+    json_t *override = json_object();
+    json_t *o = json_object();
     struct icaldatetimeperiodtype rdate = icalproperty_get_rdate(prop);
     struct buf buf = BUF_INITIALIZER;
     struct jmapical_datetime rdatedt = JMAPICAL_DATETIME_INITIALIZER;
@@ -1020,7 +1020,7 @@ override_rdate_from_ical(icalproperty *prop)
 static json_t*
 override_exdate_from_ical(icalproperty *prop, const char *tzid_start)
 {
-    json_t *override = json_pack("{}");
+    json_t *override = json_object();
     icaltimetype exdate = icalproperty_get_exdate(prop);
 
     const char *tzid_xdate = tzid_from_icalprop(prop, 1);
@@ -1056,7 +1056,7 @@ overrides_from_ical(icalcomponent *comp, json_t *event, const char *tzid_start,
                     struct jmapical_jmapcontext *jmapctx)
 {
     icalproperty *prop;
-    json_t *overrides = json_pack("{}");
+    json_t *overrides = json_object();
     const char *uid = icalcomponent_get_uid(comp);
 
     /* RDATE */
@@ -1084,7 +1084,7 @@ overrides_from_ical(icalcomponent *comp, json_t *event, const char *tzid_start,
     }
 
     /* VEVENT exceptions */
-    json_t *exceptions = json_pack("{}");
+    json_t *exceptions = json_object();
     icalcomponent *excomp, *ical;
 
     ical = icalcomponent_get_parent(comp);
@@ -1706,7 +1706,7 @@ static json_t*
 links_from_ical(icalcomponent *comp, struct jmapical_jmapcontext *jmapctx)
 {
     icalproperty* prop;
-    json_t *ret = json_pack("{}");
+    json_t *ret = json_object();
 
     /* Read iCalendar ATTACH properties */
     for (prop = icalcomponent_get_first_property(comp, ICAL_ATTACH_PROPERTY);
@@ -1829,7 +1829,7 @@ HIDDEN json_t *jmapical_alert_from_ical(icalcomponent *valarm)
 static json_t*
 alerts_from_ical(icalcomponent *comp)
 {
-    json_t* alerts = json_pack("{}");
+    json_t* alerts = json_object();
     icalcomponent* alarm;
 
     for (alarm = icalcomponent_get_first_component(comp, ICAL_VALARM_COMPONENT);
@@ -1880,7 +1880,7 @@ static json_t*
 relatedto_from_ical(icalcomponent *comp)
 {
     icalproperty* prop;
-    json_t *ret = json_pack("{}");
+    json_t *ret = json_object();
 
     for (prop = icalcomponent_get_first_property(comp, ICAL_RELATEDTO_PROPERTY);
          prop;
@@ -2003,7 +2003,7 @@ static json_t*
 locations_from_ical(icalcomponent *comp, json_t *links)
 {
     icalproperty* prop;
-    json_t *loc, *locations = json_pack("{}");
+    json_t *loc, *locations = json_object();
     char *id;
 
     /* Handle end locations */
@@ -2095,7 +2095,7 @@ static json_t*
 virtuallocations_from_ical(icalcomponent *comp)
 {
     icalproperty* prop;
-    json_t *locations = json_pack("{}");
+    json_t *locations = json_object();
 
     for (prop = icalcomponent_get_first_property(comp, ICAL_CONFERENCE_PROPERTY);
          prop;
